@@ -4,7 +4,7 @@ jinja2
 networkx
 # Install from github
 -e git://github.com/PacificBiosciences/pbcore.git@master#egg=pbcore
--e git://github.com/PacificBiosciences/pbcommand.git#egg=pbcommand
+-e git://github.com/PacificBiosciences/pbcommand.git@smrtanalysis-3.0.3#egg=pbcommand
 pyparsing==1.5.7
 pydot
 jsonschema
