@@ -13,7 +13,7 @@
         "schema_options": [
             {
                 "pb_option": {
-                    "default": 4.0, 
+                    "default": 0.0, 
                     "type": "number", 
                     "option_id": "pbccs.task_options.min_snr", 
                     "name": "Minimum SNR", 
@@ -27,7 +27,7 @@
                 "type": "object", 
                 "properties": {
                     "pbccs.task_options.min_snr": {
-                        "default": 4.0, 
+                        "default": 0.0, 
                         "type": "number", 
                         "description": "Minimum SNR of input subreads", 
                         "title": "Minimum SNR"
@@ -36,7 +36,7 @@
             }, 
             {
                 "pb_option": {
-                    "default": 0.75, 
+                    "default": 0.0, 
                     "type": "number", 
                     "option_id": "pbccs.task_options.min_read_score", 
                     "name": "Minimum Read Score", 
@@ -50,7 +50,7 @@
                 "type": "object", 
                 "properties": {
                     "pbccs.task_options.min_read_score": {
-                        "default": 0.75, 
+                        "default": 0.0, 
                         "type": "number", 
                         "description": "Minimum read score of input subreads", 
                         "title": "Minimum Read Score"
@@ -128,7 +128,7 @@
             }, 
             {
                 "pb_option": {
-                    "default": -5.0, 
+                    "default": -9999999.0, 
                     "type": "number", 
                     "option_id": "pbccs.task_options.min_zscore", 
                     "name": "Minimum Z Score", 
@@ -142,7 +142,7 @@
                 "type": "object", 
                 "properties": {
                     "pbccs.task_options.min_zscore": {
-                        "default": -5.0, 
+                        "default": -9999999.0, 
                         "type": "number", 
                         "description": "Minimum Z score to use a subread", 
                         "title": "Minimum Z Score"
@@ -171,26 +171,26 @@
                         "title": "Maximum Dropped Fraction"
                     }
                 }
-            },
+            }, 
             {
                 "pb_option": {
-                    "default": false,
-                    "type": "boolean",
-                    "option_id": "pbccs.task_options.no_polish",
-                    "name": "No Polish CCS",
+                    "default": false, 
+                    "type": "boolean", 
+                    "option_id": "pbccs.task_options.no_polish", 
+                    "name": "No Polish CCS", 
                     "description": "Only output the initial template derived from the POA"
-                },
-                "title": "JSON Schema for pbccs.task_options.no_polish",
+                }, 
+                "title": "JSON Schema for pbccs.task_options.no_polish", 
                 "required": [
                     "pbccs.task_options.no_polish"
-                ],
-                "$schema": "http://json-schema.org/draft-04/schema#",
-                "type": "object",
+                ], 
+                "$schema": "http://json-schema.org/draft-04/schema#", 
+                "type": "object", 
                 "properties": {
                     "pbccs.task_options.no_polish": {
-                        "default": false,
-                        "type": "boolean",
-                        "description": "Only output the initial template derived from the POA",
+                        "default": false, 
+                        "type": "boolean", 
+                        "description": "Only output the initial template derived from the POA", 
                         "title": "No Polish CCS"
                     }
                 }
@@ -198,9 +198,9 @@
         ], 
         "output_types": [
             {
-                "title": ".bam file", 
-                "description": "Output .bam file", 
-                "default_name": "ccs.bam", 
+                "title": "ConsensusReadSet", 
+                "description": "Output DataSet XML file", 
+                "default_name": "ccs.consensusreadset.xml", 
                 "id": "bam_output", 
                 "file_type_id": "PacBio.DataSet.ConsensusReadSet"
             }, 
@@ -212,7 +212,7 @@
                 "file_type_id": "PacBio.FileTypes.JsonReport"
             }
         ], 
-        "_comment": "Created by v0.3.0", 
+        "_comment": "Created by v0.3.11", 
         "name": "ccs", 
         "input_types": [
             {
