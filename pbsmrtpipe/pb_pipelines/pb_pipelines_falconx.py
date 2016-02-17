@@ -12,7 +12,7 @@ def dev_register(relative_id, display_name, tags=()):
     relative_id = 'x_' + relative_id
     display_name = 'x_' + display_name
     pipeline_id = to_pipeline_ns(relative_id)
-    ptags = list(set(tags + (Tags.DENOVO, )))
+    ptags = list(set(tags + (Tags.DENOVO, Tags.INTERNAL)))
     return register_pipeline(pipeline_id, display_name, "0.1.0", tags=ptags)
 
 def _get_falcon_pipeline(i_cfg, i_fasta_fofn):
