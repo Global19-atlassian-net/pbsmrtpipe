@@ -19,10 +19,13 @@
 
 # Defining Tasks using Tool Contracts
 
+*This could use some more description at a high level.  There is a good motivation for the tool contract approach, but you don't motivate it well here.*
+
 pbcommand library can be used to call python functions natively, or generate an CLI interface that can be emit **Tool Contract** JSON files, or run **Resolved Tool Contract** JSON files.
  
 See [pbcommand](http://pbcommand.readthedocs.org/) for details.
  
+
 An example using the 'quick' model that allows you to call python functions and define metadata about the task, such as the **FileType**
 
 ```python
@@ -31,13 +34,19 @@ from pbcommand.cli import registry_builder, registry_runner
 
 log = logging.getLogger(__name__)
 
+# What does the call below do?  What is registry?  registry_builder?
 registry = registry_builder("pbcommand", "python -m pbcommand.cli.examples.dev_quick_hello_world ")
 
 
+# I think a more concrete example would be beneficial.  Good examples might be
+#  1. mapping, which is a standard "workflow 101" example I see elsewhere]
+#  2. normalizing the case in a FASTA file---which is simple (FASTA-in, FASTA-out) but 
+#     concrete and interesting
 def _example_main(input_files, output_files, **kwargs):
     log.info("Running example main with {i} {o} kw:{k}".format(i=input_files,
                                                                o=output_files, k=kwargs))
     # write mock output files, otherwise the End-to-End test will fail
+    # This line below is odd and deserves a comment at the least
     xs = output_files if isinstance(output_files, (list, tuple)) else [output_files]
     for x in xs:
         with open(x, 'w') as writer:
@@ -45,8 +54,11 @@ def _example_main(input_files, output_files, **kwargs):
     return 0
 
 
-@registry("dev_qhello_world", "0.2.1", FileTypes.FASTA, FileTypes.FASTA, nproc=1, options=dict(alpha=1234))
+# You might consider using a comment line to show what the args represent:
+#         ???                 TaskVersion  TaskInputType    TaskOutputType   ???      ???
+@registry("dev_qhello_world", "0.2.1",     FileTypes.FASTA, FileTypes.FASTA, nproc=1, options=dict(alpha=1234))
 def run_rtc(rtc):
+    # please explain abbreviations like "rtc", and what the object actually represents in context
     return _example_main(rtc.task.input_files[0], rtc.task.output_files[0], nproc=rtc.task.nproc)
 
 
@@ -56,6 +68,7 @@ def run_rtc(rtc):
 
 
 if __name__ == '__main__':
+    # What does the registry_runner do?
     sys.exit(registry_runner(registry, sys.argv[1:]))
 ```
 
@@ -64,6 +77,8 @@ The tool contracts can now be emitted to a directory and tool ids can be used in
 ```bash
 $> python -m pbcommand.cli.examples.dev_quick_hello_world -o /path/to/my-tool-contracts
 ```
+
+*Show the output, to make it more concrete what has happened...*
 
 ## Defining a Pipeline
 
@@ -97,6 +112,7 @@ log = logging.getLogger(__name__)
 def get_dev_local_pipeline():
     """Simple example pipeline"""
     
+    # what is $entry?  Comment here?
     b1 = [('$entry:e_01', 'pbsmrtpipe.tasks.dev_hello_world:0')]
 
     b2 = [('pbsmrtpipe.tasks.dev_hello_world:0', 'pbsmrtpipe.tasks.dev_hello_worlder:0')]
@@ -114,7 +130,7 @@ The pipeline can by run by referencing id **pipelines.pbsmrtpipe.dev_local** usi
 
 ## CLI
 
-
+*This needs some attention.  Some of these commands are just shown, with no explanation.  Also, I recommend describing what showing some of the output of the below commands ... the old writers' adage is "show, don't tell"*
 
     > pbsmrtpipe pipeline my_workflow.xml --output=/path/to/output_dir entry_01:/path/to/file.txt entry_id_02:/path/to/file2.txt
     
@@ -166,6 +182,8 @@ optional arguments:
 ```
 
 ### Development and Testing
+
+
 
 
 "testkit" is the test framework for testing pipelines.
