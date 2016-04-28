@@ -55,8 +55,8 @@ class Tags(object):
     RESEQ = (MAP, CONSENSUS)
     RESEQ_INTERNAL = (MAP, CONSENSUS, INTERNAL)
     RESEQ_RPT = (MAP, CONSENSUS, RPT)
-    RESEQ_MOD_DET = (MAP, CONSENSUS, MOD_DET)
-    RESEQ_MOTIF = (MAP, CONSENSUS, MOD_DET, MOTIF)
+    RESEQ_MOD_DET = (MAP, CONSENSUS, MOD_DET, INTERNAL)
+    RESEQ_MOTIF = (MAP, CONSENSUS, MOD_DET, MOTIF, INTERNAL)
 
 
 def sa3_register(relative_id, display_name, version, tags=(), task_options=None):
@@ -259,8 +259,8 @@ BASEMODS_TASK_OPTIONS["genomic_consensus.task_options.algorithm"] = "best"
 BASEMODS_TASK_OPTIONS["kinetics_tools.task_options.pvalue"] = 0.001
 
 @sa3_register("ds_modification_detection",
-                   'Base Modification Detection', "0.1.0",
-                   tags=(Tags.MOD_DET, ), task_options=BASEMODS_TASK_OPTIONS)
+              'Base Modification Detection', "0.1.0",
+              tags=(Tags.MOD_DET, Tags.INTERNAL), task_options=BASEMODS_TASK_OPTIONS)
 def rs_modification_detection_1():
     """
     Base Modification Analysis Pipeline - performs resequencing workflow
@@ -302,7 +302,7 @@ def _core_motif_analysis(ipd_gff, reference_ds):
 
 
 @sa3_register("ds_modification_motif_analysis", 'Base Modification and Motif Analysis', "0.1.0",
-              tags=(Tags.MOTIF, ), task_options=BASEMODS_TASK_OPTIONS)
+              tags=(Tags.MOTIF, Tags.INTERNAL), task_options=BASEMODS_TASK_OPTIONS)
 def rs_modification_and_motif_analysis_1():
     """
     Modification and Motif Analysis Pipeline - performs resequencing workflow,
