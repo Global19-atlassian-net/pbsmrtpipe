@@ -13,7 +13,7 @@
         "schema_options": [], 
         "output_types": [
             {
-                "title": "JSON file", 
+                "title": "Iso-Seq classification report",
                 "description": "Path to write report JSON output", 
                 "default_name": "isoseq_classify_report", 
                 "id": "outJson", 

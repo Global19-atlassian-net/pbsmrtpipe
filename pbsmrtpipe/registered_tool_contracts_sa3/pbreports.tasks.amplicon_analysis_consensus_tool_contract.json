@@ -13,7 +13,7 @@
         "schema_options": [], 
         "output_types": [
             {
-                "title": "ConsensusReportJSON", 
+                "title": "Amplicon consensus report",
                 "description": "Consensus Report JSON", 
                 "default_name": "consensus_report", 
                 "id": "report_json", 
