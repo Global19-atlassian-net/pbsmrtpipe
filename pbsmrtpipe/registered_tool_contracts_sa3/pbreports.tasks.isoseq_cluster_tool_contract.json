@@ -13,7 +13,7 @@
         "schema_options": [], 
         "output_types": [
             {
-                "title": "Output JSON", 
+                "title": "Iso-Seq clustering report",
                 "description": "Path to write Report json output.", 
                 "default_name": "isoseq_cluster_report", 
                 "id": "outJson", 
