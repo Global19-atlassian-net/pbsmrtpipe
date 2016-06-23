@@ -2,7 +2,7 @@
   "version": "0.3.3",
   "driver": {
     "serialization": "json",
-    "exe": "exampleAccuracyDensityPlot.R run-rtc "
+    "exe": "AccuracyDensityPlot.R run-rtc "
   },
   "tool_contract_id": "pbcommandR.tasks.accplot_reseq_condition",
   "tool_contract": {
