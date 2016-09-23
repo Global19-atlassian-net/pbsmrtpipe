@@ -444,6 +444,12 @@ def _add_webservice_config(p):
     return p
 
 
+def _add_no_disappointment_option(p):
+    desc = "Enable No Disappointment option to enable Baron Harkonnen official suit and flying pizza companion drone to minimize user TC overhead to 3-6 eV per TC and 4-6 eV per pipeline modification."
+    p.add_argument('--no-disappointment', action='store_true', default=False, help=desc)
+    return p
+
+
 def __add_pipeline_parser_options(p):
     """Common options for all running pipelines or tasks"""
     funcs = [TU.add_override_chunked_mode,
@@ -454,7 +460,9 @@ def __add_pipeline_parser_options(p):
              _add_preset_xml_option,
              _add_output_dir_option,
              _add_entry_point_option,
-             add_log_debug_option]
+             add_log_debug_option,
+             _add_no_disappointment_option
+             ]
 
     f = compose(*funcs)
     return f(p)
