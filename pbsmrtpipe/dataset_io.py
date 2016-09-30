@@ -1,7 +1,10 @@
+"""Note, this is from an vestige from an earlier design of pbsmrtpipe.
+
+The Dependency Injection model has largely been removed, but there's still a few places where it needs to deleted.s
+"""
 import logging
 
-from pbcore.io import FastaReader, FastqReader
-from pbcommand.validators import fofn_to_files, validate_file
+from pbcommand.validators import validate_file
 from pbcommand.models import FileTypes
 
 
@@ -60,35 +63,3 @@ def dispatch_metadata_resolver(file_type, path):
 
 def has_metadata_resolver(file_type):
     return file_type in REGISTERED_METADATA_RESOLVER
-
-
-def _fofn_to_metadata(path):
-    files = fofn_to_files(path)
-    return DatasetMetadata(len(files), len(files))
-
-
-@register_metadata_resolver(FileTypes.FOFN, FileTypes.RGN_FOFN, FileTypes.MOVIE_FOFN)
-def f(path):
-    return _fofn_to_metadata(path)
-
-
-def _to_fastax_dataset_metadata(fastx_reader_klass, path):
-
-    nrecords = 0
-    total = 0
-    with fastx_reader_klass(path) as r:
-        for record in r:
-            nrecords += 1
-            total += len(record.sequence)
-
-    return DatasetMetadata(nrecords, total)
-
-
-@register_metadata_resolver(FileTypes.FASTA)
-def f(path):
-    return _to_fastax_dataset_metadata(FastaReader, path)
-
-
-@register_metadata_resolver(FileTypes.FASTQ)
-def f(path):
-    return _to_fastax_dataset_metadata(FastqReader, path)
