@@ -9,7 +9,7 @@ from pbcommand.pb_io.report import (load_report_from_json,
                                     load_report_spec_from_json)
 from pbcommand.validators import validate_report
 from pbcommand.models import FileTypes
-from pbcore.io import getDataSetUuid
+from pbcommand.utils import get_dataset_metadata
 
 from .base import TestBase
 from pbsmrtpipe.testkit.base import monkey_patch
@@ -95,7 +95,7 @@ class TestDataStoreUuids(TestBase):
             n_tested = 0
             for file_info in d['files']:
                 if file_info['fileTypeId'] in DATASET_FILE_TYPES:
-                    uuid = getDataSetUuid(file_info['path'])
+                    uuid = get_dataset_metadata(file_info['path']).uuid
                     self.assertEqual(uuid, file_info['uniqueId'],
                                      "{p}: {u1} != {u2}".format(
                                      p=file_info['path'],

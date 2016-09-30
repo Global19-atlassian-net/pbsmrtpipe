@@ -19,11 +19,9 @@ from pbcommand.pb_io import (write_resolved_tool_contract,
                              write_tool_contract,
                              load_report_from_json)
 from pbcommand.pb_io.tool_contract_io import write_resolved_tool_contract_avro
-from pbcommand.utils import log_traceback
+from pbcommand.utils import log_traceback, get_dataset_metadata
 from pbcommand.models import (FileTypes, DataStoreFile)
 from pbsmrtpipe.utils import nfs_exists_check
-
-from pbcore.io import getDataSetUuid
 
 import pbsmrtpipe
 import pbsmrtpipe.constants as GlobalConstants
@@ -133,7 +131,7 @@ def _get_or_create_uuid_from_file(path, file_type):
     if file_type.file_type_id == FileTypes.REPORT.file_type_id:
         return _get_report_uuid(path)
     elif file_type.file_type_id in FileTypes.ALL_DATASET_TYPES():
-        return getDataSetUuid(path)
+        return get_dataset_metadata(path).uuid
     else:
         return uuid.uuid4()
 

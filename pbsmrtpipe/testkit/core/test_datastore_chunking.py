@@ -14,7 +14,6 @@ import re
 
 from pbcommand.pb_io.report import load_report_from_json
 from pbcommand.models import FileTypes
-from pbcore.io import getDataSetUuid
 
 from .base import TestBase
 
