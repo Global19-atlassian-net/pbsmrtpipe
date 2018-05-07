@@ -79,17 +79,17 @@ def _add_run_on_cluster_option(p):
 def to_task_report(host, task_id, run_time_sec, exit_code, error_message, warning_message):
     # Move this somewhere that makes sense
 
-    def to_a(idx, value):
-        return Attribute(idx, value)
+    def to_a(idx, value, name):
+        return Attribute(idx, value, name)
 
-    datum = [('host', host),
-             ('task_id', task_id),
-             ('run_time', run_time_sec),
-             ('exit_code', exit_code),
-             ('error_msg', error_message),
-             ('warning_msg', warning_message)]
+    datum = [('host', host, "Hostname"),
+             ('task_id', task_id, "Task ID"),
+             ('run_time', run_time_sec, "Task Run Time"),
+             ('exit_code', exit_code, "Exit Code"),
+             ('error_msg', error_message, "Error Message"),
+             ('warning_msg', warning_message, "Warning Message")]
 
-    attributes = [to_a(i, v) for i, v in datum]
+    attributes = [to_a(i, v, n) for i, v, n in datum]
     r = Report("workflow_task", attributes=attributes)
     return r
 
@@ -99,7 +99,8 @@ def update_task_report(report_path, run_time_sec):
     Add total run time (including cluster overhead) to an existing report.
     """
     rpt = load_report_from_json(report_path)
-    rpt.attributes.append(Attribute("total_run_time", value=run_time_sec))
+    rpt.attributes.append(Attribute("total_run_time", run_time_sec,
+                                    "Total Run Time"))
     return rpt
 
 
