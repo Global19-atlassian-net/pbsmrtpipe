@@ -19,6 +19,7 @@ from pbcommand.models.report import Attribute, Report
 from pbcommand.utils import which, nfs_exists_check
 from pbcommand.validators import validate_file
 from pbcommand.cli.utils import main_runner_default
+from pbcommand.pb_io import load_report_from_json
 
 from pbsmrtpipe.cluster import ClusterTemplateRender, ClusterTemplate
 from pbsmrtpipe.cluster import Constants as ClusterConstants
@@ -30,7 +31,7 @@ import pbsmrtpipe.pb_io as IO
 log = logging.getLogger(__name__)
 slog = logging.getLogger('status.' + __name__)
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 
 def _resolve_exe(exe):
@@ -91,6 +92,15 @@ def to_task_report(host, task_id, run_time_sec, exit_code, error_message, warnin
     attributes = [to_a(i, v) for i, v in datum]
     r = Report("workflow_task", attributes=attributes)
     return r
+
+
+def update_task_report(report_path, run_time_sec):
+    """
+    Add total run time (including cluster overhead) to an existing report.
+    """
+    rpt = load_report_from_json(report_path)
+    rpt.attributes.append(Attribute("total_run_time", value=run_time_sec))
+    return rpt
 
 
 def write_task_report(job_resources, task_id, path_to_report, report_images):
@@ -483,9 +493,9 @@ def run_task_on_cluster(runnable_task, task_manifest_path, output_dir, debug_mod
             if cstderr:
                 f.write(msg_ + "\n")
 
-    r = to_task_report(host, runnable_task.task.task_id, run_time, rcode, err_msg, warn_msg)
     task_report_path = os.path.join(output_dir, 'task-report.json')
-    msg = "Writing task id {i} task report to {r}".format(r=task_report_path, i=runnable_task.task.task_id)
+    r = update_task_report(task_report_path, run_time)
+    msg = "Writing task id {i} task final report to {r}".format(r=task_report_path, i=runnable_task.task.task_id)
     log.info(msg)
     r.write_json(task_report_path)
 
