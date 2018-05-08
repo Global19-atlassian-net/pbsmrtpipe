@@ -78,3 +78,4 @@ extras/pipeline-templates-json/*
 0.stdout
 pipeline-docs
 extras/pipeline-view-rules/*
+coverage.xml

@@ -24,9 +24,6 @@ doc-clean:
 	rm -rf docs/modules.rst
 	cd docs && make clean
 
-unit-test:
-	nosetests --verbose --logging-conf nose.cfg pbsmrtpipe/pb_tasks/tests/*.py pbsmrtpipe/tests/test_*.py
-
 clean-testkit:
 	find testkit-data -name "job_output" | xargs rm -rf;
 	find testkit-data -name "0.stdout" | xargs rm -rf;
@@ -39,7 +36,9 @@ test-dev: clean-testkit
 	cd testkit-data && pbtestkit-multirunner --debug --nworkers 8 dev.fofn
 
 test-unit:
-	nosetests --verbose --with-xunit --logging-conf nose.cfg pbsmrtpipe/pb_tasks/tests/*.py pbsmrtpipe/tests/test_*.py
+	rm -f coverage.xml
+	nosetests --with-coverage --cover-erase --cover-xml --cover-xml-file=coverage.xml --cover-package=pbsmrtpipe --verbose --with-xunit --logging-conf nose.cfg pbsmrtpipe/pb_tasks/tests/*.py pbsmrtpipe/tests/test_*.py
+	sed -i -e 's@filename="@filename="./@g' coverage.xml
 
 test-pipelines:
 	nosetests --verbose --logging-conf nose.cfg pbsmrtpipe/tests/test_pb_pipelines_sanity.py
