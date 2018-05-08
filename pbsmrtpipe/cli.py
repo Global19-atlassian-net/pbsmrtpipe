@@ -1,3 +1,5 @@
+
+from __future__ import print_function
 import copy
 import json
 import os
@@ -203,9 +205,9 @@ def run_show_templates(avro_output_dir=None, json_output_dir=None,
 
     rtasks_d, _, _, pts = L.load_all()
 
-    print pretty_registered_pipelines(pts, show_all=show_all)
+    print(pretty_registered_pipelines(pts, show_all=show_all))
     if not show_all:
-        print "Run with --show-all to display (unsupported) developer/internal pipelines"
+        print("Run with --show-all to display (unsupported) developer/internal pipelines")
 
     if avro_output_dir is not None:
         write_pipeline_templates_to_avro(pts.values(), rtasks_d, avro_output_dir)
@@ -239,17 +241,17 @@ def _args_run_show_templates(args):
 def write_task_options_to_preset_xml_and_print(task_options_d, output_file, warning_msg):
     if task_options_d:
         IO.write_schema_task_options_to_xml(task_options_d, output_file)
-        print "Wrote preset to {x}".format(x=output_file)
+        print("Wrote preset to {x}".format(x=output_file))
     else:
-        print warning_msg
+        print(warning_msg)
 
 
 def write_presets_json_and_print(p, opts, output_file, warning_msg):
     if opts:
         IO.write_pipeline_presets_json(p, opts, output_file)
-        print "Wrote preset to {j}".format(j=output_file)
+        print("Wrote preset to {j}".format(j=output_file))
     else:
-        print warning_msg
+        print(warning_msg)
 
 
 def run_show_template_details(template_id, output_preset_xml, output_preset_json):
@@ -262,17 +264,17 @@ def run_show_template_details(template_id, output_preset_xml, output_preset_json
 
     if template_id in pipelines_d:
         pipeline = pipelines_d[template_id]
-        print "**** Pipeline Summary ****"
-        print "id            : {i}".format(i=pipeline.idx)
-        print "version       : {i}".format(i=pipeline.version)
-        print "name          : {x}".format(x=pipeline.display_name)
-        # print "Schema version: {}".format(pipeline.schema_version)
+        print("**** Pipeline Summary ****")
+        print("id            : {i}".format(i=pipeline.idx))
+        print("version       : {i}".format(i=pipeline.version))
+        print("name          : {x}".format(x=pipeline.display_name))
+        # print("Schema version: {}".format(pipeline.schema_version))
         if pipeline.tags:
-            print "Tags       : {t} ".format(t=",".join(pipeline.tags))
-        print "Description: \n {x}".format(x=pipeline.description.strip())
+            print("Tags       : {t} ".format(t=",".join(pipeline.tags)))
+        print("Description: \n {x}".format(x=pipeline.description.strip()))
 
-        print
-        print pretty_bindings(pipeline.all_bindings)
+        print("")
+        print(pretty_bindings(pipeline.all_bindings))
 
         for b_out, b_in, in pipeline.all_bindings:
                 for x in (b_out, b_in):
@@ -306,12 +308,12 @@ def run_show_template_details(template_id, output_preset_xml, output_preset_json
         if pb_options:
             _print_pacbio_options([pb_options[k] for k in sorted(pb_options.keys())])
         else:
-            print "No default task options"
+            print("No default task options")
 
     else:
         msg = "Unable to find template id '{t}' in registered pipelines. Use the show-templates option to get a list of workflow options.".format(t=template_id)
         log.error(msg)
-        print msg
+        print(msg)
 
     return 0
 
@@ -332,7 +334,7 @@ def __dynamically_load_all():
 
     rtasks, rfile_types, roperators, rpipelines = L.load_all()
     _d = dict(n=_f(rtasks), f=_f(rfile_types), o=_f(roperators), p=_f(rpipelines))
-    print "Registry Loaded. Number of ToolContracts:{n} FileTypes:{f} ChunkOperators:{o} Pipelines:{p}".format(**_d)
+    print("Registry Loaded. Number of ToolContracts:{n} FileTypes:{f} ChunkOperators:{o} Pipelines:{p}".format(**_d))
     return rtasks, rfile_types, roperators, rpipelines
 
 
@@ -344,15 +346,15 @@ def run_show_tasks():
     max_id = max(len(t.task_id) for t in sorted_tasks)
     pad = 4
     offset = max_id + pad
-    print "Registered ToolContracts ({n})".format(n=len(sorted_tasks))
-    print
+    print("Registered ToolContracts ({n})".format(n=len(sorted_tasks)))
+    print("")
 
     def _to_a(klass):
         d = {MetaTask: "", MetaScatterTask: "(scatter)", MetaGatherTask: "(gather)"}
         return d.get(klass, "")
 
     for i, t in enumerate(sorted_tasks):
-        print " ".join([(str(i + 1) + ".").rjust(4), t.task_id.ljust(offset), _to_a(t) + t.display_name])
+        print(" ".join([(str(i + 1) + ".").rjust(4), t.task_id.ljust(offset), _to_a(t) + t.display_name]))
 
     return 0
 
@@ -370,16 +372,16 @@ def _print_option_schemas(option_schemas_d):
     def _get_v(oid, s, name):
         return s['properties'][oid][name]
 
-    print "Number of Options {n}".format(n=len(option_schemas_d))
+    print("Number of Options {n}".format(n=len(option_schemas_d)))
     if option_schemas_d:
         n = 0
         for opt_id, schema in option_schemas_d.iteritems():
-            print "Option #{n} Id: {i}".format(n=n, i=opt_id)
-            print "\tDefault     : ", _get_v(opt_id, schema, 'default')
-            print "\tType        : ", _get_v(opt_id, schema, 'type')
-            print "\tDescription : ", _get_v(opt_id, schema, 'description')
+            print("Option #{n} Id: {i}".format(n=n, i=opt_id))
+            print("\tDefault     : ", _get_v(opt_id, schema, 'default'))
+            print("\tType        : ", _get_v(opt_id, schema, 'type'))
+            print("\tDescription : ", _get_v(opt_id, schema, 'description'))
             n += 1
-            print
+            print("")
 
 
 def _print_pacbio_options(pacbio_options):
@@ -393,9 +395,9 @@ def _print_pacbio_options(pacbio_options):
         return name.rjust(pad) + " : {}".format(value)
 
     def printer(name, value):
-        print to_s(name, value)
+        print(to_s(name, value))
 
-    print "Number of Options {n}".format(n=len(pacbio_options))
+    print("Number of Options {n}".format(n=len(pacbio_options)))
     if pacbio_options:
         for i, pb_option in enumerate(pacbio_options):
             n = i + 1
@@ -406,7 +408,7 @@ def _print_pacbio_options(pacbio_options):
                 printer("Choices", pb_option.choices)
             printer("Display Name", pb_option.name)
             printer("Description", pb_option.description)
-            print
+            print("")
 
 
 def run_show_task_details(task_id):
@@ -420,9 +422,9 @@ def run_show_task_details(task_id):
     if meta_task is None:
         raise KeyError("Unable to find Task id '{i}' Use 'show-tasks' option to list available task ids.".format(i=task_id))
     else:
-        print sep
-        print meta_task.summary()
-        print "Option type for MetaTask", type(meta_task.option_schemas)
+        print(sep)
+        print(meta_task.summary())
+        print("Option type for MetaTask", type(meta_task.option_schemas))
         _print_pacbio_options(meta_task.option_schemas)
 
     return 0
@@ -708,17 +710,17 @@ def _args_show_chunk_operator_summary(args):
     if chunk_operators:
         for i, xs in enumerate(chunk_operators.iteritems()):
             op_id, chunk_operator = xs
-            print "{i}. Chunk Operator Id: {o}".format(o=op_id, i=i)
-            print "  Scatter :"
-            print "    Scatter Task: {i} -> Chunk Task: {t}".format(i=chunk_operator.scatter.task_id, t=chunk_operator.scatter.scatter_task_id)
+            print("{i}. Chunk Operator Id: {o}".format(o=op_id, i=i))
+            print("  Scatter :")
+            print("    Scatter Task: {i} -> Chunk Task: {t}".format(i=chunk_operator.scatter.task_id, t=chunk_operator.scatter.scatter_task_id))
             for si, c in enumerate(chunk_operator.scatter.chunks):
-                print "    {i} Task Binding: {t} -> Chunk Key: {k}".format(t=c.task_input, k=c.chunk_key, i=si)
-            print "  Gather :"
+                print("    {i} Task Binding: {t} -> Chunk Key: {k}".format(t=c.task_input, k=c.chunk_key, i=si))
+            print("  Gather :")
             for ci, c in enumerate(chunk_operator.gather.chunks):
-                print "    {i} Gather Task: {t} ".format(t=c.gather_task_id, i=ci)
-                print "      Task Binding: {i} -> Chunk Key: {k} ".format(i=c.task_input, k=c.chunk_key)
+                print("    {i} Gather Task: {t} ".format(t=c.gather_task_id, i=ci))
+                print("      Task Binding: {i} -> Chunk Key: {k} ".format(i=c.task_input, k=c.chunk_key))
     else:
-        print "WARNING. No Chunk operators loaded"
+        print("WARNING. No Chunk operators loaded")
 
     return 0
 

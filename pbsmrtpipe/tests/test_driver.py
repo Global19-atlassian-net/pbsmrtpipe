@@ -2,6 +2,7 @@
 import logging
 import pprint
 import unittest
+import os
 from collections import namedtuple
 
 from nose.plugins.attrib import attr
@@ -88,17 +89,21 @@ def _run_driver_from_job_config(job_config):
     :param job_config:
     :return:
     """
-    job_output_dir = job_config.tmp_dir_func(job_config.job_name)
-    tmp_dir = job_config.tmp_dir_func(job_config.job_name + '_tmp')
+    cwd = os.getcwd()
+    try:
+        job_output_dir = job_config.tmp_dir_func(job_config.job_name)
+        tmp_dir = job_config.tmp_dir_func(job_config.job_name + '_tmp')
 
-    ep_d = {e_id: job_config.tmp_file_func(file_name) for e_id, file_name in job_config.ep_d.iteritems()}
+        ep_d = {e_id: job_config.tmp_file_func(file_name) for e_id, file_name in job_config.ep_d.iteritems()}
 
-    rtasks, chunk_operators = _get_registered_tasks_and_operators()
-    rfiles = _get_registered_files()
-    bgraph_ = B.binding_strs_to_binding_graph(rtasks, job_config.bindings_str)
+        rtasks, chunk_operators = _get_registered_tasks_and_operators()
+        rfiles = _get_registered_files()
+        bgraph_ = B.binding_strs_to_binding_graph(rtasks, job_config.bindings_str)
 
-    state = _test_run_driver(chunk_operators, rtasks, rfiles, ep_d, bgraph_, job_output_dir, tmp_dir, job_config.task_opts, job_config.cluster_renderer)
-    return state
+        state = _test_run_driver(chunk_operators, rtasks, rfiles, ep_d, bgraph_, job_output_dir, tmp_dir, job_config.task_opts, job_config.cluster_renderer)
+        return state
+    finally:
+        os.chdir(cwd)
 
 
 @attr(SLOW_ATTR)

@@ -1,4 +1,5 @@
 """Process Engine for running jobs"""
+from __future__ import print_function
 import os
 import sys
 import threading
@@ -194,7 +195,7 @@ def run_command_async(command, file_stdout=None, file_stderr=None):
 
     # Delete old files.
     def rm(fn):
-        print "RM: %r" %fn
+        print("RM: %r" %fn)
         if os.path.exists(fn):
             os.unlink(fn)
     rm(fno)
@@ -328,16 +329,15 @@ def run_command(cmd, stdout_fh, stderr_fh, shell=True, time_out=None):
         process.poll()
         time.sleep(sleep_time)
         run_time = time.time() - started_at
-        if time_out is not None:
-            if run_time > time_out:
-                log.info("Exceeded TIMEOUT of {t}. Killing cmd '{c}'".format(t=time_out, c=cmd))
-                try:
-                    process.send_signal(signal.SIGINT) # Maybe get a stack-trace?
-                    time.sleep(1)
-                    process.terminate()
-                    process.kill()
-                except OSError:
-                    log.exception('Problem while terminating sub-process.')
+        if time_out is not None and run_time > time_out:
+            log.info("Exceeded TIMEOUT of {t}. Killing cmd '{c}'".format(t=time_out, c=cmd))
+            try:
+                process.send_signal(signal.SIGINT) # Maybe get a stack-trace?
+                time.sleep(1)
+                process.terminate()
+                process.kill()
+            except OSError:
+                log.exception('Problem while terminating sub-process.')
         if sleep_time < max_sleep_time:
             sleep_time += dt
 
@@ -424,7 +424,7 @@ class EngineWorker(multiprocessing.Process):
             # Check for shutdown message from process pool
             if self.shutdown_event.is_set():
                 # hard kill of subprocess call and all it's children processes
-                print "Sending SIGTERM to process group {p}.".format(p=p.pid)
+                print("Sending SIGTERM to process group {p}.".format(p=p.pid))
                 os.killpg(p.pid, signal.SIGTERM)
                 p.terminate()
 
@@ -451,7 +451,7 @@ class EngineWorker(multiprocessing.Process):
 
         msg = "Worker {s} {n}: completed run()".format(s=self.__class__.__name__, n=self.name)
         log.info(msg)
-        print msg
+        print(msg)
 
 
 class ClusterEngineWorker(multiprocessing.Process):
@@ -605,7 +605,7 @@ class ProcessPoolManager(multiprocessing.Process):
             time.sleep(self.sleep_time)
 
         msg = "Exiting Pool.run()"
-        print msg
+        print(msg)
         slog.info(msg)
 
 

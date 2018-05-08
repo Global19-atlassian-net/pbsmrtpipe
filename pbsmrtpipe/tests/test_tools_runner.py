@@ -51,13 +51,16 @@ class TestRunnableTask(TestDirBase):
         self.assertIsInstance(rt, RunnableTask)
 
         f = lambda x: os.path.join(self.temp_dir, x)
-
         stdout = f("stdout")
         stderr = f("stderr")
-        rcode, err_msg, run_time = R.run_task(rt, self.temp_dir, stdout, stderr, DEBUG)
-        # Need to generate a manifest on-the-fly otherwise there the paths
-        # in the manifest will be wrong.
-        self.assertIsInstance(rcode, int)
+        cwd = os.getcwd()
+        try:
+            rcode, err_msg, run_time = R.run_task(rt, self.temp_dir, stdout, stderr, DEBUG)
+            # Need to generate a manifest on-the-fly otherwise there the paths
+            # in the manifest will be wrong.
+            self.assertIsInstance(rcode, int)
+        finally:
+            os.chdir(cwd)
 
 
 class TestHelloRunnableTask(TestRunnableTask):
