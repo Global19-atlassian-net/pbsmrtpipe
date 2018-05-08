@@ -142,6 +142,7 @@ class TestReports(TestBase):
 
         # found one or more valid Report
         have_reports = True
+        skip_messages = []
 
         for ds_file in ds.files.values():
             if ds_file.file_type_id == FileTypes.REPORT.file_type_id:
@@ -149,10 +150,15 @@ class TestReports(TestBase):
                     _ = validate_func(ds_file.path)
                 except ValueError as e:
                     self.fail("Report validation failed:\n{e}".format(e=str(e)))
+                except unittest.SkipTest as e:
+                    log.info(e.message)
+                    skip_messages.append(e.message)
                 else:
                     have_reports = True
 
         if not have_reports:
+            if len(skip_messages) > 0:
+                raise unittest.SkipTest("\n".join(skip_messages))
             raise unittest.SkipTest("No Report JSON files in datastore.")
         return have_reports
 
