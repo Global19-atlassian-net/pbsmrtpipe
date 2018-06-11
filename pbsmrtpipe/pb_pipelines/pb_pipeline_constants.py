@@ -74,6 +74,7 @@ class Tags(object):
     COND = "conditions"
     # Beta pipelines
     BETA = "beta"
+    ALPHA = "alpha"
 
     RESEQ = (MAP, CONSENSUS)
     RESEQ_INTERNAL = (MAP, CONSENSUS, INTERNAL)
