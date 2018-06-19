@@ -573,14 +573,6 @@ class Pipeline(object):
         self.task_options = {} if task_options is None else task_options
 
     @property
-    def tag_set(self):
-        # to get around this odd ',' encoded array
-        if self.tags == "":
-            return set([])
-        else:
-            return {s.strip() for s in self.tags.split(",")}
-
-    @property
     def pipeline_id(self):
         return self.idx
 
