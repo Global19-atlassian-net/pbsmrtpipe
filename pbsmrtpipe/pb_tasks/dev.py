@@ -416,7 +416,7 @@ def run_dev_dataset_reports_filter(rtc):
     """
     from pbcore.io import SubreadSet
     with SubreadSet(rtc.task.input_files[0]) as ds:
-        ds.newUUID()
+        ds.newUuid()
         ds.write(rtc.task.output_files[0])
         rpt1 = Report("dev_subread_report",
                       attributes=[Attribute("n_reads", value=len(ds))],
