@@ -10,7 +10,7 @@ import random
 
 from pbcommand.cli import registry_builder, registry_runner
 from pbcommand.pb_io.report import fofn_to_report
-from pbcommand.models import FileTypes, SymbolTypes, DataStore, DataStoreFile
+from pbcommand.models import FileTypes, SymbolTypes, DataStore, DataStoreFile, OutputFileType
 from pbcommand.models.report import Report, Attribute
 from pbcore.io import (readFofn, ReferenceSet, FastqReader, FastaWriter,
                        FastaRecord, FastaReader)
@@ -398,6 +398,36 @@ def run_dev_ccs_report(rtc):
         report = Report("ccs_report", title="ConsensusReadSet XML Report",
                         attributes=attr)
         report.write_json(rtc.task.output_files[0])
+    return 0
+
+
+rpt_file_type1 = OutputFileType(FileTypes.REPORT.file_type_id, "Report 1", "Report 1", "Report with dataset UUID", "report1")
+rpt_file_type2 = OutputFileType(FileTypes.REPORT.file_type_id, "Report 2", "Report 2", "Report without dataset UUID", "report2")
+
+@registry("dev_dataset_reports_filter", "0.1.0",
+          FileTypes.DS_SUBREADS,
+          (FileTypes.DS_SUBREADS, rpt_file_type1, rpt_file_type2),
+          is_distributed=False)
+def run_dev_dataset_reports_filter(rtc):
+    """
+    Take an input SubreadSet and write the following files:
+     1) a new SubreadSet with new UUID
+     2) a Report JSON referencing the new SubreadSet UUID
+     3) a second Report JSON that does not reference the SubreadSet
+    This is used for integration-testing the SMRT Link dataset reports
+    endpoint, which should only return the file from (2).
+    """
+    from pbcore.io import SubreadSet
+    with SubreadSet(rtc.task.input_files[0]) as ds:
+        ds.newUuid(random=True)
+        ds.write(rtc.task.output_files[0])
+        rpt1 = Report("dev_subread_report",
+                      attributes=[Attribute("n_reads", value=len(ds))],
+                      dataset_uuids=[ds.uuid])
+        rpt1.write_json(rtc.task.output_files[1])
+        rpt2 = Report("dev_misc_report",
+                      attributes=[Attribute("time", value=time.time())])
+        rpt2.write_json(rtc.task.output_files[2])
     return 0
 
 

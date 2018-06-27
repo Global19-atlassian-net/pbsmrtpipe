@@ -235,3 +235,8 @@ def get_dev_diagnostic_ccs():
     return [
         (Constants.ENTRY_DS_CCS, "pbsmrtpipe.tasks.dev_ccs_report:0")
     ]
+
+
+@dev_register("dev_dataset_reports_filter", "Dataset Reports Test for SMRT Link", tags=("subreads","report"))
+def get_dev_dataset_reports_filter():
+    return [(Constants.ENTRY_DS_SUBREAD, "pbsmrtpipe.tasks.dev_dataset_reports_filter:0")]
