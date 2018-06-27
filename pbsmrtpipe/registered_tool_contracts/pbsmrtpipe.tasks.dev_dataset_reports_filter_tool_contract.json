@@ -28,18 +28,18 @@
                 "title": "<DataSetFileType id=PacBio.DataSet.SubreadSet name=file >"
             },
             {
-                "default_name": "report",
-                "description": "description for <FileType id=PacBio.FileTypes.JsonReport name=report >",
+                "default_name": "report1",
+                "description": "Report with dataset UUID",
                 "file_type_id": "PacBio.FileTypes.JsonReport",
-                "id": "Label PacBio.FileTypes.JsonReport_1",
-                "title": "<FileType id=PacBio.FileTypes.JsonReport name=report >"
+                "id": "Report 1",
+                "title": "Report 1"
             },
             {
-                "default_name": "report",
-                "description": "description for <FileType id=PacBio.FileTypes.JsonReport name=report >",
+                "default_name": "report2",
+                "description": "Report without dataset UUID",
                 "file_type_id": "PacBio.FileTypes.JsonReport",
-                "id": "Label PacBio.FileTypes.JsonReport_2",
-                "title": "<FileType id=PacBio.FileTypes.JsonReport name=report >"
+                "id": "Report 2",
+                "title": "Report 2"
             }
         ],
         "resource_types": [],
