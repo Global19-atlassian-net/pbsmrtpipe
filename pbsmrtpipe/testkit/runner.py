@@ -94,7 +94,7 @@ def write_nunit_output(name, xunit_out, nunit_out, requirements=(),
 
 
 def run_butler_tests(test_cases, output_dir, output_xml, job_id,
-                     requirements=()):
+                     requirements=(), xray_tests=(), nunit_out=None):
     """
 
     :return:
@@ -115,6 +115,13 @@ def run_butler_tests(test_cases, output_dir, output_xml, job_id,
                               requirements=requirements)
     log.info(str(xml))
 
+    if nunit_out is not None and len(xray_tests) > 0:
+        write_nunit_output(
+            name=job_id,
+            xunit_out=output_xml,
+            nunit_out=nunit_out,
+            requirements=requirements,
+            tests=xray_tests)
     return 0 if result.wasSuccessful() else 1
 
 
@@ -123,7 +130,8 @@ def run_butler(butler, test_cases, output_xml,
                log_level=logging.DEBUG,
                force_distribute=None,
                force_chunk=None,
-               ignore_test_failures=False):
+               ignore_test_failures=False,
+               nunit_out="nunit_out.xml"):
     """
     Run a Butler instance.
 
@@ -181,7 +189,7 @@ def run_butler(butler, test_cases, output_xml,
 
         if test_cases is not None:
             slog.info("Running in test-only mode")
-            trcode = run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, requirements=butler.requirements)
+            trcode = run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, requirements=butler.requirements, xray_tests=butler.xray_tests, nunit_out=nunit_out)
         else:
             trcode = 0
 
