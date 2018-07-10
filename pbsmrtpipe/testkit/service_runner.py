@@ -148,7 +148,7 @@ def run_butler_tests_from_cfg(testkit_cfg, output_dir, output_xml,
         output_xml=output_xml,
         job_id=job_id,
         requirements=butler.requirements)
-    if nunit_out is not None and len(butler.xray_tests) > 0:
+    if nunit_out is not None:
         write_nunit_output(
             name=job_id,
             xunit_out=output_xml,
@@ -251,7 +251,7 @@ def get_parser():
     p.add_argument("-x", "--xunit", dest="xml_out", default="test-output.xml",
                    help="Output XUnit test results")
     p.add_argument("-n", "--nunit", dest="nunit_out", default="nunit_out.xml",
-                   help="Optional NUnit output file, used for JIRA/Xray integration; will be written only if the 'xray_tests' field is populated.")
+                   help="Optional NUnit output file, used for JIRA/Xray integration.")
     p.add_argument("-t", "--timeout", dest="time_out", type=int, default=1800,
                    help="Timeout for blocking after job submission")
     p.add_argument("-s", "--sleep", dest="sleep", type=int, default=2,
