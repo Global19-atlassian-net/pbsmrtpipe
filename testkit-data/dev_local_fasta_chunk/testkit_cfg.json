@@ -3,8 +3,8 @@
   "description": "Dev example for Fasta Chunking",
   "author": "mkocher",
   "debug": true,
-  "workflowXml": "workflow_id.xml",
-  "presetXml": "preset.xml",
+  "pipelineId": "pbsmrtpipe.pipelines.dev_local_fasta_chunk",
+  "presetJson": "preset.json",
   "entryPoints": [
     {
       "entryId": "e_01",
@@ -12,6 +12,6 @@
     }
   ],
   "pythonTests": {
-    "pbsmrtpipe.testkit.core": ["test_zero", "test_resources", "test_datastore", "test_datastore_chunking"]
+    "pbsmrtpipe.testkit.core": ["test_zero", "test_resources", "test_datastore_chunking"]
   }
 }

@@ -1,0 +1,22 @@
+{
+  "_comment": "Automatically converted from .cfg file", 
+  "testId": "dev_02_cluster", 
+  "pipelineId": "pbsmrtpipe.pipelines.dev_dist", 
+  "entryPoints": [
+    {
+      "entryId": "e_01", 
+      "path": "/Users/mkocher/repos/pbsmrtpipe/testkit-data/dev_02_cluster/input.txt"
+    }
+  ], 
+  "description": null, 
+  "jobType": "pbsmrtpipe", 
+  "outputDir": "job_output", 
+  "presetJson": "preset.json", 
+  "pythonTests": {
+    "pbsmrtpipe.testkit.core": [
+      "test_zero", 
+      "test_resources", 
+      "test_datastore"
+    ]
+  }
+}

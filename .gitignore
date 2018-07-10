@@ -69,6 +69,9 @@ extras/pipeline-templates-avro/*
 testkit-data/*/job_output
 testkit-data/*/run.sh
 testkit-data/junit_combined_results.xml
+testkit-data/*/nunit_out.xml
+testkit-data/*/test-output.xml
+testkit-data/*/jenkins_test-output.xml
 sync_over_sa3_build.sh
 
 .eggs/

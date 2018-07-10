@@ -1,0 +1,16 @@
+{
+  "_comment": "Dev diagnostic presets",
+  "pipelineId": "pbsmrtpipe.pipelines.dev_diagnostic",
+  "presetId": "task-options-test",
+  "name": "task-options-test",
+  "description": "Test propagation of task options",
+  "options": {
+    "pbsmrtpipe.options.chunk_mode": false,
+    "pbsmrtpipe.options.max_nchunks": 7,
+    "pbsmrtpipe.options.max_nproc": 4,
+    "pbsmrtpipe.options.max_total_nproc": 6
+  },
+  "taskOptions": {
+    "pbsmrtpipe.task_options.dev_sleep_time_sec": 10
+  }
+}

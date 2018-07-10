@@ -1,0 +1,18 @@
+{
+  "_comment": "Automatically converted from .cfg file",
+  "testId": "dev_local_chunk",
+  "pipelineId": "pbsmrtpipe.pipelines.dev_local_chunk",
+  "entryPoints": [
+    {
+      "entryId": "e_01",
+      "path": "input.txt"
+    }
+  ],
+  "description": null,
+  "jobType": "pbsmrtpipe",
+  "outputDir": "job_output",
+  "presetJson": "preset.json",
+  "pythonTests": {
+    "pbsmrtpipe.testkit.core": ["test_zero", "test_resources", "test_datastore_chunking"]
+  }
+}

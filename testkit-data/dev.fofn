@@ -1,8 +1,8 @@
-dev_01/testkit.cfg
-dev_01_ds/testkit.cfg
-dev_03/testkit.cfg
-dev_04/testkit.cfg
-dev_diagnostic/testkit.cfg
-dev_diagnostic_stress/testkit.cfg
-dev_local_chunk/testkit.cfg
-dev_local_fasta_chunk/testkit.json
+dev_01/testkit_cfg.json
+dev_01_ds/testkit_cfg.json
+dev_03/testkit_cfg.json
+dev_04/testkit_cfg.json
+dev_diagnostic/testkit_cfg.json
+dev_diagnostic_stress/testkit_cfg.json
+dev_local_chunk/testkit_cfg.json
+dev_local_fasta_chunk/testkit_cfg.json

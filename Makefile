@@ -28,6 +28,9 @@ clean-testkit:
 	find testkit-data -name "job_output" | xargs rm -rf;
 	find testkit-data -name "0.stdout" | xargs rm -rf;
 	find testkit-data -name "0.stderr" | xargs rm -rf;
+	find testkit-data -name "jenkins_test-output.xml" | xargs rm -rf;
+	find testkit-data -name "nunit_out.xml" | xargs rm -rf;
+	find testkit-data -name "test-output.xml" | xargs rm -rf;
 
 test-pylint:
 	pylint --errors-only pbsmrtpipe

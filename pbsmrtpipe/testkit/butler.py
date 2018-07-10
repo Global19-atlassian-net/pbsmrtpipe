@@ -50,12 +50,14 @@ class Butler(object):
     def __init__(self, job_id, output_dir, entry_points, preset_json,
                  preset_xml, debug,
                  force_distribute=None, force_chunk=None, base_exe=EXE,
-                 requirements=(), xray_tests=()):
+                 requirements=(), xray_tests=(), tags=()):
         self.output_dir = output_dir
         self.entry_points = entry_points
         self.preset_json = preset_json
         self.preset_xml = preset_xml
         self.debug_mode = debug
+        # Set of strings
+        self.tags = tags
 
         # None means no override, True|False means override
         self.force_distribute = force_distribute
@@ -88,8 +90,8 @@ class Butler(object):
 
 class ButlerWorkflow(Butler):
 
-    def __init__(self, job_id, output_dir, pipeline_id, workflow_xml, entry_points, preset_json_path, preset_xml_path, debug, force_distribute=None, force_chunk=None, base_exe=EXE, requirements=(), xray_tests=()):
-        super(ButlerWorkflow, self).__init__(job_id, output_dir, entry_points, preset_json_path, preset_xml_path, debug, force_distribute=force_distribute, force_chunk=force_chunk, base_exe=base_exe, requirements=requirements, xray_tests=xray_tests)
+    def __init__(self, job_id, output_dir, pipeline_id, workflow_xml, entry_points, preset_json_path, preset_xml_path, debug, force_distribute=None, force_chunk=None, base_exe=EXE, requirements=(), xray_tests=(), tags=()):
+        super(ButlerWorkflow, self).__init__(job_id, output_dir, entry_points, preset_json_path, preset_xml_path, debug, force_distribute=force_distribute, force_chunk=force_chunk, base_exe=base_exe, requirements=requirements, xray_tests=xray_tests, tags=tags)
         assert [workflow_xml, pipeline_id].count(None) == 1
         self.workflow_xml = workflow_xml
         self.pipeline_id = pipeline_id
@@ -118,7 +120,9 @@ class ButlerWorkflow(Butler):
                 force_distribute=force_distribute,
                 force_chunk=force_chunk,
                 requirements=tuple(d.get("requirements", [])),
-                xray_tests=tuple(d.get("xrayTests", [])))
+                xray_tests=tuple(d.get("xrayTests", [])),
+                tags=tuple(d.get("tags", []))
+            )
 
 
 class ButlerTask(Butler):
