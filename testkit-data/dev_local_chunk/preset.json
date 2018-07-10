@@ -1,0 +1,17 @@
+{
+  "_comment": "Dev diagnostic presets",
+  "pipelineId": "pbsmrtpipe.pipelines.dev_local_chunk",
+  "presetId": "task-options-test",
+  "name": "task-options-test",
+  "description": "Test propagation of task options",
+  "options": {
+    "pbsmrtpipe.options.distributed_mode": false,
+    "pbsmrtpipe.options.chunk_mode": true,
+    "pbsmrtpipe.options.max_nchunks": 7,
+    "pbsmrtpipe.options.max_nproc": 4,
+    "pbsmrtpipe.options.max_total_nproc": 6
+  },
+  "taskOptions": {
+    "pbsmrtpipe.task_options.dev.hello_message": "My Custom Preset Message"
+  }
+}

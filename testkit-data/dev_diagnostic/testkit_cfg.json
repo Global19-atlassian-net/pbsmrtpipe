@@ -1,0 +1,24 @@
+{
+  "_comment": "Automatically converted from .cfg file", 
+  "testId": "dev_diagnostic", 
+  "pipelineId": "pbsmrtpipe.pipelines.dev_diagnostic", 
+  "entryPoints": [
+    {
+      "entryId": "eid_ref_dataset", 
+      "path": "referenceset.xml"
+    }
+  ], 
+  "description": null, 
+  "jobType": "pbsmrtpipe", 
+  "outputDir": "job_output", 
+  "presetJson": "preset.json",
+  "pythonTests": {
+    "pbsmrtpipe.testkit.core": [
+      "test_zero", 
+      "test_resources", 
+      "test_datastore", 
+      "test_datastore_chunking", 
+      "test_task_options"
+    ]
+  }
+}

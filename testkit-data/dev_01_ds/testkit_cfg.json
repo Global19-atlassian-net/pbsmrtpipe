@@ -1,0 +1,22 @@
+{
+  "_comment": "Automatically converted from .cfg file", 
+  "testId": "dev_01_dataset", 
+  "pipelineId": "pbsmrtpipe.pipelines.dev_diagnostic_subreads", 
+  "entryPoints": [
+    {
+      "entryId": "eid_subread", 
+      "path": "example.subreadset.xml"
+    }
+  ],
+  "tags": ["alpha", "beta", "gamma"],
+  "description": null, 
+  "jobType": "pbsmrtpipe", 
+  "outputDir": "job_output", 
+  "presetJson": "preset.json", 
+  "pythonTests": {
+    "pbsmrtpipe.testkit.core": [
+      "test_zero", 
+      "test_resources"
+    ]
+  }
+}

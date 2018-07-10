@@ -1,0 +1,20 @@
+{
+  "_comment": "Automatically converted from XML", 
+  "pipelineId": "pbsmrtpipe.pipelines.dev_01_ds", 
+  "presetId": "dev_01_dataset", 
+  "name": "dev_01_dataset", 
+  "description": "Presets for test of pbsmrtpipe.pipelines.dev_01_ds", 
+  "options": {
+    "pbsmrtpipe.options.debug_mode": false, 
+    "pbsmrtpipe.options.max_nproc": 24, 
+    "pbsmrtpipe.options.tmp_dir": "/tmp", 
+    "pbsmrtpipe.options.chunk_mode": false, 
+    "pbsmrtpipe.options.max_total_nproc": 1000, 
+    "pbsmrtpipe.options.max_nchunks": 24, 
+    "pbsmrtpipe.options.distributed_mode": false,
+    "pbsmrtpipe.options.exit_on_failure": false, 
+    "pbsmrtpipe.options.cluster_manager": "pbsmrtpipe.cluster_templates.sge", 
+    "pbsmrtpipe.options.max_nworkers": 100
+  }, 
+  "taskOptions": {}
+}
