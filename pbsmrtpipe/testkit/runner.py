@@ -87,6 +87,7 @@ def write_nunit_output(name, xunit_out, nunit_out, requirements=(),
     log.info("Exporting NUnit report for JIRA/X-ray integration")
     xsuite = X.XunitTestSuite.from_xml(xunit_out)
     success = (xsuite.nfailure + xsuite.nerrors) == 0
+    requirements = set(list(requirements) + list(xsuite.requirements))
     result = nunit.TestCase(name, success, tests, requirements,
                             asserts=len(xsuite.tests))
     xml_doc = nunit.create_nunit_xml([result])
@@ -115,7 +116,7 @@ def run_butler_tests(test_cases, output_dir, output_xml, job_id,
                               requirements=requirements)
     log.info(str(xml))
 
-    if nunit_out is not None and len(xray_tests) > 0:
+    if nunit_out is not None:
         write_nunit_output(
             name=job_id,
             xunit_out=output_xml,
@@ -236,13 +237,14 @@ def _args_run_butler(args):
         # in test only mode, only emit to stdout (to avoid overwritten the
         # log file
         setup_logger(None, level=log_level)
-        return run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, butler.requirements)
+        return run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, butler.requirements, nunit_out=args.nunit_out)
     else:
         rcode = run_butler(butler, test_cases, output_xml, log_file,
                            log_level=log_level,
                            force_distribute=force_distribute,
                            force_chunk=force_chunk,
-                           ignore_test_failures=args.ignore_test_failures)
+                           ignore_test_failures=args.ignore_test_failures,
+                           nunit_out=args.nunit_out)
         return rcode
 
 
@@ -266,6 +268,8 @@ def add_ignore_test_failures_option(p):
 def add_output_xml_option(p):
     p.add_argument("--output-xml", action="store", dest="output_xml",
                    default=None, help="Path to output XUnit XML")
+    p.add_argument("--nunit", dest="nunit_out", default=None,
+                   help="Optional NUnit output file, used for JIRA/Xray integration.")
     return p
 
 
