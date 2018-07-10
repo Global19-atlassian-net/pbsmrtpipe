@@ -182,15 +182,23 @@ def run_services_testkit_job(host, port, testkit_cfg,
             service_access_layer=sal,
             services_job_id=test_job_id,
             nunit_out=nunit_out)
+
+    # MK. I don't really understand whats going on here. Can't this
+    # be parsed once into an object from the testkit_cfg file path?
+    butler = config_parser_to_butler(testkit_cfg)
+
     entrypoints = get_entrypoints(testkit_cfg)
     pipeline_id = pipeline_id_from_testkit_cfg(testkit_cfg)
     job_id = job_id_from_testkit_cfg(testkit_cfg)
+    task_options, workflow_options = get_task_and_workflow_options(testkit_cfg)
+
     log.info("job_id = {j}".format(j=job_id))
     log.info("pipeline_id = {p}".format(p=pipeline_id))
     log.info("url = {h}:{p}".format(h=host, p=port))
-    task_options, workflow_options = get_task_and_workflow_options(testkit_cfg)
+
     service_entrypoints = [ServiceEntryPoint.from_d(x) for x in
                            entrypoints_dicts(entrypoints)]
+
     for ep, dataset_xml in entrypoints.iteritems():
         log.info("Importing {x}".format(x=dataset_xml))
         sal.run_import_local_dataset(dataset_xml)
@@ -202,7 +210,9 @@ def run_services_testkit_job(host, port, testkit_cfg,
     engine_job = run_analysis_job(sal, job_id, pipeline_id,
                                   service_entrypoints, block=True,
                                   time_out=time_out,
-                                  task_options=task_options)
+                                  task_options=task_options,
+                                  tags=butler.tags)
+
     exit_code = run_butler_tests_from_cfg(
         testkit_cfg=testkit_cfg,
         output_dir=engine_job.path,
