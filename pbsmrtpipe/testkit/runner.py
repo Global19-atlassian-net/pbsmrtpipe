@@ -87,7 +87,7 @@ def write_nunit_output(name, xunit_out, nunit_out, requirements=(),
     log.info("Exporting NUnit report for JIRA/X-ray integration")
     xsuite = X.XunitTestSuite.from_xml(xunit_out)
     success = (xsuite.nfailure + xsuite.nerrors) == 0
-    requirements = list(requirements) + list(xsuite.requirements)
+    requirements = set(list(requirements) + list(xsuite.requirements))
     result = nunit.TestCase(name, success, tests, requirements,
                             asserts=len(xsuite.tests))
     xml_doc = nunit.create_nunit_xml([result])
