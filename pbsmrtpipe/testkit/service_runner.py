@@ -5,7 +5,6 @@ pbtestkit-runner.
 """
 
 import xml.etree.ElementTree as ET
-import argparse
 import logging
 import os
 import sys
@@ -17,6 +16,7 @@ from pbcommand.utils import setup_log
 from pbcommand.services import ServiceEntryPoint
 from pbcommand.services._service_access_layer import get_smrtlink_client
 from pbcommand.services.cli import run_analysis_job
+from pbcommand.validators import validate_file
 
 from pbsmrtpipe.pb_io import parse_pipeline_preset_xml, parse_pipeline_preset_json, validate_raw_task_options
 import pbsmrtpipe.loader as L
@@ -205,7 +205,7 @@ def run_services_testkit_job(host, port, testkit_cfg,
     if import_only:
         log.info("Skipping job execution")
         return 0
-    log.info("starting anaylsis job...")
+    log.info("starting analysis job...")
     # XXX note that workflow options are currently ignored
     engine_job = run_analysis_job(sal, job_id, pipeline_id,
                                   service_entrypoints, block=True,
@@ -245,7 +245,7 @@ def get_parser():
     p = get_default_argparser_with_base_opts(
         version="0.1",
         description=__doc__)
-    p.add_argument("testkit_cfg")
+    p.add_argument("testkit_cfg", help="Path to pbsmrtpipe Testkit JSON file", type=validate_file)
     p.add_argument("-u", "--host", dest="host", action="store",
                    default=os.environ.get("PB_SERVICE_HOST", "localhost"),
                    help="Hostname of SMRT Link server.  If this is anything other than 'localhost' you must supply authentication.")
