@@ -4,120 +4,22 @@ Utility for running a testkit job through services as an alternative to
 pbtestkit-runner.
 """
 
-import xml.etree.ElementTree as ET
 import logging
 import os
 import sys
 
-from pbcommand.models.common import TaskOptionTypes
 from pbcommand.cli import (get_default_argparser_with_base_opts,
                            pacbio_args_runner)
 from pbcommand.utils import setup_log
-from pbcommand.services import ServiceEntryPoint
 from pbcommand.services._service_access_layer import get_smrtlink_client
 from pbcommand.services.cli import run_analysis_job
 from pbcommand.validators import validate_file
 
-from pbsmrtpipe.pb_io import parse_pipeline_preset_xml, parse_pipeline_preset_json, validate_raw_task_options
-import pbsmrtpipe.loader as L
-from pbsmrtpipe.testkit.butler import config_parser_to_butler
-from pbsmrtpipe.testkit.loader import (parse_cfg_file,
-    dtype_and_uuid_from_dataset_xml)
+from pbsmrtpipe.testkit.butler import ButlerWorkflow
+from pbsmrtpipe.testkit.loader import parse_tests_from_testkit_json
 from pbsmrtpipe.testkit.runner import run_butler_tests, write_nunit_output
 
 log = logging.getLogger(__name__)
-
-
-# FIXME(nechols)(2016-01-22): these utility functions should live elsewhere
-def get_entrypoints(testkit_cfg):
-    parsed_cfg = config_parser_to_butler(testkit_cfg)
-    entrypoints = parsed_cfg.entry_points
-    return entrypoints
-
-
-def get_task_and_workflow_options(testkit_cfg):
-    parsed_cfg = config_parser_to_butler(testkit_cfg)
-    workflow_options, task_options = [], []
-    def __get_option_type(val):
-        option_type = TaskOptionTypes.STR
-        if isinstance(val, bool):
-            option_type = TaskOptionTypes.BOOL
-        elif isinstance(val, int):
-            option_type = TaskOptionTypes.INT
-        elif isinstance(val, float):
-            option_type = TaskOptionTypes.FLOAT
-        elif val is None:
-            val = ""
-        return option_type, val
-    rtasks_d, _, _, _ = L.load_all()
-    if not parsed_cfg.preset_xml in [None, '']:
-        if not parsed_cfg.preset_json in [None, '']:
-            raise ValueError("Please use either preset_json or preset_xml, not both")
-        presets = parse_pipeline_preset_xml(parsed_cfg.preset_xml)
-        task_opts_d = validate_raw_task_options(rtasks_d, dict(presets.task_options))
-        for option_id, option_value in task_opts_d.iteritems():
-            log.info("task_option: {i} = {v}".format(i=option_id,
-                                                     v=option_value))
-            option_type, option_value = __get_option_type(option_value)
-            task_options.append(dict(
-                optionId=option_id,
-                value=option_value,
-                optionTypeId=option_type))
-        for option_id, option_value in presets.workflow_options:
-            log.info("workflow_option: {i} = {v}".format(i=option_id,
-                                                         v=option_value))
-            workflow_options.append(dict(
-                optionId=option_id,
-                value=option_value,
-                optionTypeId=__get_option_type(option_value)[0]))
-    elif not parsed_cfg.preset_json in [None, '']:
-        presets = parse_pipeline_preset_json(parsed_cfg.preset_json)
-        for option_id, option_value in presets.task_options:
-            log.info("task_option: {i} = {v}".format(i=option_id,
-                                                     v=option_value))
-            option_type, option_value = __get_option_type(option_value)
-            task_options.append(dict(
-                optionId=option_id,
-                value=option_value,
-                optionTypeId=option_type))
-        for option_id, option_value in presets.workflow_options:
-            log.info("workflow_option: {i} = {v}".format(i=option_id,
-                                                         v=option_value))
-            workflow_options.append(dict(
-                optionId=option_id,
-                value=option_value,
-                optionTypeId=__get_option_type(option_value)[0]))
-    return task_options, workflow_options
-
-
-def entrypoints_dicts(entrypoints):
-    """
-    Extract dataset info from a list of entrypoints.
-    """
-    eps = []
-    for entrypoint, dataset_xml in entrypoints.iteritems():
-        dtype, unique_id = dtype_and_uuid_from_dataset_xml(dataset_xml)
-        entry = {"_comment": "pbservice auto-job",
-                 "datasetId": "{u}".format(u=unique_id),
-                 "entryId": "{k}".format(k=entrypoint),
-                 "fileTypeId": "{t}".format(t=dtype)}
-        eps.append(entry)
-    return eps
-
-
-def pipeline_id_from_testkit_cfg(testkit_cfg):
-    parsed_cfg = config_parser_to_butler(testkit_cfg)
-    if parsed_cfg.workflow_xml is not None:
-        tree = ET.parse(parsed_cfg.workflow_xml)
-        root = tree.getroot()
-        return root[0].attrib['id']
-    else:
-        return parsed_cfg.pipeline_id
-
-
-def job_id_from_testkit_cfg(testkit_cfg):
-    parsed_cfg = config_parser_to_butler(testkit_cfg)
-    return parsed_cfg.job_id
 
 
 # FIXME evil dwells here
@@ -132,12 +34,13 @@ def _patch_test_cases_with_service_access_layer(test_cases,
             t.__class__.job_id = job_id
 
 
-def run_butler_tests_from_cfg(testkit_cfg, output_dir, output_xml,
-                              service_access_layer, services_job_id=None,
-                              nunit_out=None):
-    job_id = job_id_from_testkit_cfg(testkit_cfg)
-    butler = config_parser_to_butler(testkit_cfg)
-    test_cases = parse_cfg_file(testkit_cfg)
+def run_butler_tests_from_testkit_json(testkit_json, output_dir, output_xml,
+                                       service_access_layer, services_job_id=None,
+                                       nunit_out=None):
+
+    butler = ButlerWorkflow.from_json(testkit_json)
+    job_id = butler.job_id
+    test_cases = parse_tests_from_testkit_json(testkit_json)
     _patch_test_cases_with_service_access_layer(test_cases,
                                                 service_access_layer,
                                                 job_id=services_job_id)
@@ -158,7 +61,7 @@ def run_butler_tests_from_cfg(testkit_cfg, output_dir, output_xml,
     return exit_code
 
 
-def run_services_testkit_job(host, port, testkit_cfg,
+def run_services_testkit_job(host, port, testkit_json,
                              xml_out="test-output.xml",
                              nunit_out="nunit_out.xml",
                              ignore_test_failures=False,
@@ -171,35 +74,35 @@ def run_services_testkit_job(host, port, testkit_cfg,
         2. connect to the SMRTLink services and start the job, then block
            until it finishes
         3. run the standard test suite on the job output
+
+    :param test_job_id: Means ONLY run the tests if a SL job id isn't provided
+    :type test_job_id: int | None
     """
     sal = get_smrtlink_client(host, port, user, password)
+
     if test_job_id is not None:
         engine_job = sal.get_job_by_id(test_job_id)
-        return run_butler_tests_from_cfg(
-            testkit_cfg=testkit_cfg,
+        return run_butler_tests_from_testkit_json(
+            testkit_json=testkit_json,
             output_dir=engine_job.path,
             output_xml=xml_out,
             service_access_layer=sal,
             services_job_id=test_job_id,
             nunit_out=nunit_out)
 
-    # MK. I don't really understand whats going on here. Can't this
-    # be parsed once into an object from the testkit_cfg file path?
-    butler = config_parser_to_butler(testkit_cfg)
+    butler = ButlerWorkflow.from_json(testkit_json)
 
-    entrypoints = get_entrypoints(testkit_cfg)
-    pipeline_id = pipeline_id_from_testkit_cfg(testkit_cfg)
-    job_id = job_id_from_testkit_cfg(testkit_cfg)
-    task_options, workflow_options = get_task_and_workflow_options(testkit_cfg)
+    pipeline_id = butler.pipeline_id
+    job_id = butler.job_id
+    task_options = butler.get_task_options()
 
     log.info("job_id = {j}".format(j=job_id))
     log.info("pipeline_id = {p}".format(p=pipeline_id))
     log.info("url = {h}:{p}".format(h=host, p=port))
 
-    service_entrypoints = [ServiceEntryPoint.from_d(x) for x in
-                           entrypoints_dicts(entrypoints)]
+    service_entrypoints = butler.get_service_entry_points()
 
-    for ep, dataset_xml in entrypoints.iteritems():
+    for ep, dataset_xml in butler.entry_points.iteritems():
         log.info("Importing {x}".format(x=dataset_xml))
         sal.run_import_local_dataset(dataset_xml)
     if import_only:
@@ -213,8 +116,8 @@ def run_services_testkit_job(host, port, testkit_cfg,
                                   task_options=task_options,
                                   tags=butler.tags)
 
-    exit_code = run_butler_tests_from_cfg(
-        testkit_cfg=testkit_cfg,
+    exit_code = run_butler_tests_from_testkit_json(
+        testkit_json=testkit_json,
         output_dir=engine_job.path,
         output_xml=xml_out,
         service_access_layer=sal,
@@ -229,7 +132,7 @@ def args_runner(args):
     return run_services_testkit_job(
         host=args.host,
         port=args.port,
-        testkit_cfg=args.testkit_cfg,
+        testkit_json=args.testkit_json,
         xml_out=args.xml_out,
         nunit_out=args.nunit_out,
         ignore_test_failures=args.ignore_test_failures,
@@ -245,7 +148,7 @@ def get_parser():
     p = get_default_argparser_with_base_opts(
         version="0.1",
         description=__doc__)
-    p.add_argument("testkit_cfg", help="Path to pbsmrtpipe Testkit JSON file", type=validate_file)
+    p.add_argument("testkit_json", help="Path to pbsmrtpipe Testkit JSON file", type=validate_file)
     p.add_argument("-u", "--host", dest="host", action="store",
                    default=os.environ.get("PB_SERVICE_HOST", "localhost"),
                    help="Hostname of SMRT Link server.  If this is anything other than 'localhost' you must supply authentication.")
