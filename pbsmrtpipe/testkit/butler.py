@@ -7,9 +7,10 @@ import abc
 import os
 
 from pbcommand.models import TaskOptionTypes
+from pbcommand.utils import get_dataset_metadata
 from pbcommand.services import ServiceEntryPoint
 
-from pbsmrtpipe.pb_io import dtype_and_uuid_from_dataset_xml, parse_pipeline_preset_json
+from pbsmrtpipe.pb_io import parse_pipeline_preset_json
 
 log = logging.getLogger(__name__)
 
@@ -59,11 +60,11 @@ def _entrypoints_dicts(entry_points):
     """
     eps = []
     for entrypoint, dataset_xml in entry_points.iteritems():
-        dtype, unique_id = dtype_and_uuid_from_dataset_xml(dataset_xml)
+        m = get_dataset_metadata(dataset_xml)
         entry = {"_comment": "pbservice auto-job",
-                 "datasetId": "{u}".format(u=unique_id),
+                 "datasetId": "{u}".format(u=m.unique_id),
                  "entryId": "{k}".format(k=entrypoint),
-                 "fileTypeId": "{t}".format(t=dtype)}
+                 "fileTypeId": "{t}".format(t=m.metatype)}
         eps.append(entry)
     return eps
 

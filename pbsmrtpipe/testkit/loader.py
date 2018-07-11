@@ -10,9 +10,6 @@ import json
 
 # Why is there here?
 import pbsmrtpipe.testkit.base
-# for backward compat
-from pbsmrtpipe.pb_io import dtype_and_uuid_from_dataset_xml
-
 
 log = logging.getLogger(__name__)
 

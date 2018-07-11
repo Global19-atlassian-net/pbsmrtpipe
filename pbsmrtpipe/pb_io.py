@@ -1284,16 +1284,3 @@ def static_gather_meta_task_to_rtc(static_meta_task, task, task_options, task_di
 
     return rtc
 
-
-def dtype_and_uuid_from_dataset_xml(dataset_xml):
-    """
-
-    Thin util to extract the Mimimal DataSet MetaType and UniqueId from the DataSet XML
-
-    :param dataset_xml:
-    """
-    tree = ET.parse(dataset_xml)
-    root = tree.getroot()
-    metatype = root.attrib['MetaType']
-    unique_id = root.attrib['UniqueId']
-    return metatype, unique_id
