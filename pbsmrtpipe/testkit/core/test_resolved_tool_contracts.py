@@ -9,7 +9,6 @@ import logging
 
 from pbcommand.pb_io.tool_contract_io import (load_tool_contract_from,
     load_resolved_tool_contract_from)
-from pbsmrtpipe.testkit.loader import dtype_and_uuid_from_dataset_xml
 from .base import TestBase
 
 log = logging.getLogger(__name__)

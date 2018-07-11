@@ -62,7 +62,7 @@ def _entrypoints_dicts(entry_points):
     for entrypoint, dataset_xml in entry_points.iteritems():
         m = get_dataset_metadata(dataset_xml)
         entry = {"_comment": "pbservice auto-job",
-                 "datasetId": "{u}".format(u=m.unique_id),
+                 "datasetId": "{u}".format(u=m.uuid),
                  "entryId": "{k}".format(k=entrypoint),
                  "fileTypeId": "{t}".format(t=m.metatype)}
         eps.append(entry)
