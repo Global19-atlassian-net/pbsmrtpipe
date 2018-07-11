@@ -1,13 +1,10 @@
 import logging
-import argparse
 import os
-import pprint
-import random
 import sys
 import time
 import unittest
 
-from pbcommand.cli import pacbio_args_runner, get_default_argparser
+from pbcommand.cli import pacbio_args_runner
 
 # the pbcommand version raise OSError for some reason
 from pbcommand.cli.core import get_default_argparser_with_base_opts
@@ -20,7 +17,7 @@ from pbsmrtpipe.engine import run_command_async
 from pbsmrtpipe.cli import (LOG_LEVELS, resolve_dist_chunk_overrides)
 from pbsmrtpipe.constants import SLOG_PREFIX
 
-import pbsmrtpipe.testkit.butler as B
+from pbsmrtpipe.testkit.butler import ButlerWorkflow
 import pbsmrtpipe.testkit.loader as L
 import pbsmrtpipe.testkit.xunit as X
 import pbsmrtpipe.tools.utils as TU
@@ -32,7 +29,7 @@ slog = logging.getLogger(SLOG_PREFIX + __name__)
 slog.addHandler(logging.NullHandler())
 
 
-__version__ = '0.3.2'
+__version__ = '0.4.0'
 
 
 def _patch_test_cases_with_job_dir(test_cases, job_dir):
@@ -203,23 +200,34 @@ def run_butler(butler, test_cases, output_xml,
     return rcode | trcode
 
 
-def _args_run_butler(args):
+def _run_butler(testkit_json, only_tests, log_level, force_chunk, force_distribute, nunit_out, ignore_test_failures, output_xml=None, log_file=None):
 
-    butler = B.config_parser_to_butler(args.testkit_cfg)
+    butler = ButlerWorkflow.from_json(testkit_json)
+    log.info(butler)
 
-    test_cases = L.parse_cfg_file(args.testkit_cfg)
+    test_cases = L.parse_tests_from_testkit_json(testkit_json)
 
-    if not os.path.exists(butler.output_dir):
-        os.mkdir(butler.output_dir)
-
-    output_xml = args.output_xml
     if output_xml is None:
         output_xml = os.path.join(butler.output_dir, 'testkit_xunit.xml')
 
-    if args.log_file is None:
+    if log_file is None:
         log_file = os.path.join(butler.output_dir, 'testkit.log')
+
+    if only_tests:
+        # in test only mode, only emit to stdout (to avoid overwritten the
+        # log file
+        setup_logger(None, level=log_level)
+        return run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, butler.requirements, nunit_out=nunit_out)
     else:
-        log_file = args.log_file
+        return run_butler(butler, test_cases, output_xml, log_file,
+                           log_level=log_level,
+                           force_distribute=force_distribute,
+                           force_chunk=force_chunk,
+                           ignore_test_failures=ignore_test_failures,
+                           nunit_out=nunit_out)
+
+
+def _args_run_butler(args):
 
     force_distribute, force_chunk = resolve_dist_chunk_overrides(args)
 
@@ -233,19 +241,13 @@ def _args_run_butler(args):
         # The logger isn't setup yet
         print "Args", args
 
-    if args.only_tests:
-        # in test only mode, only emit to stdout (to avoid overwritten the
-        # log file
-        setup_logger(None, level=log_level)
-        return run_butler_tests(test_cases, butler.output_dir, output_xml, butler.job_id, butler.requirements, nunit_out=args.nunit_out)
-    else:
-        rcode = run_butler(butler, test_cases, output_xml, log_file,
-                           log_level=log_level,
-                           force_distribute=force_distribute,
-                           force_chunk=force_chunk,
-                           ignore_test_failures=args.ignore_test_failures,
-                           nunit_out=args.nunit_out)
-        return rcode
+    return _run_butler(args.testkit_json, args.only_tests, log_level, force_chunk, force_distribute, args.nunit_out, args.ignore_test_failures, output_xml=args.output_xml, log_file=args.log_file)
+
+
+def _validate_testkit_json(path):
+    f = validate_file(path)
+    _ = ButlerWorkflow.from_json(f)
+    return f
 
 
 def add_tests_only_option(p):
@@ -254,7 +256,7 @@ def add_tests_only_option(p):
 
 
 def _add_config_file_option(p):
-    p.add_argument('testkit_cfg', type=validate_file, help="Path to testkit.cfg file.")
+    p.add_argument('testkit_json', type=_validate_testkit_json, help="Path to testkit JSON file.")
     return p
 
 

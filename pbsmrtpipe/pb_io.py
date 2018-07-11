@@ -5,6 +5,7 @@ import logging
 from collections import namedtuple
 import warnings
 from xml.etree.cElementTree import ElementTree
+import xml.etree.ElementTree as ET
 import collections
 import json
 import itertools
@@ -1282,3 +1283,4 @@ def static_gather_meta_task_to_rtc(static_meta_task, task, task_options, task_di
     task.resources = task.resources
 
     return rtc
+

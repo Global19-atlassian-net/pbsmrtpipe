@@ -3,14 +3,13 @@
 import xml.etree.ElementTree as ET
 import importlib
 import logging
-import ConfigParser
 import types
 import unittest
 import warnings
 import json
 
+# Why is there here?
 import pbsmrtpipe.testkit.base
-
 
 log = logging.getLogger(__name__)
 
@@ -72,7 +71,7 @@ def _load_test_cases_from_module(module_instance):
     return test_cases
 
 
-def parse_cfg_file(path):
+def parse_tests_from_testkit_json(path):
     test_cases = []
 
     def _load_test(module_base, test_name):
@@ -99,20 +98,6 @@ def parse_cfg_file(path):
                 for t in test_names:
                     _load_test(module_base_, t)
     else:
-        p = ConfigParser.ConfigParser()
-        p.read(path)
-        if p.has_section('tests'):
-            xs = _get_section_items(p, 'tests')
-            for module_base_, raw_tests in xs:
-                for t in _parse_tests(raw_tests):
-                    _load_test(module_base_, t)
+        raise ValueError("Only testkit JSON files are supported. Unsupported file {}".format(path))
 
     return test_cases
-
-
-def dtype_and_uuid_from_dataset_xml(dataset_xml):
-    tree = ET.parse(dataset_xml)
-    root = tree.getroot()
-    metatype = root.attrib['MetaType']
-    unique_id = root.attrib['UniqueId']
-    return metatype, unique_id
