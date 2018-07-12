@@ -85,7 +85,7 @@ def _merge_xml_results(xml_type, merge_function, testkit_cfgs, output_file,
 
 
 def _merge_nunit_files(output_file, xml_files):
-    doc = nunit.combine_results(xml_files)
+    doc = nunit.combine_results(xml_files, only_with_properties=True)
     write_xml(doc, output_file)
 
 
